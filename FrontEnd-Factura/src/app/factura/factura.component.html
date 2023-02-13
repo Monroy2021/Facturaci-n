@@ -1,0 +1,198 @@
+<p-toast></p-toast>
+<div class="card">
+  <div class="container">
+    <div class="row mt20">
+      <div class="col-md-6 offset-md-3 text-center">
+        <h1><strong>Facturación</strong></h1>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <p-toolbar styleClass="p-mb-4">
+      <ng-template pTemplate="left">
+        <button
+          pButton
+          pRipple
+          icon="pi pi-plus"
+          class="p-button-success p-mr-2 B1"
+          (click)="openNew()"
+        ></button>
+        <button
+          pButton
+          pRipple
+          icon="pi pi-trash"
+          class="p-button-danger"
+          (click)="deleteSelectedProducts()"
+          [disabled]="!selectedProducts || !selectedProducts.length"
+        ></button>
+      </ng-template>
+
+      <ng-template pTemplate="right">
+        <p-fileUpload
+          mode="basic"
+          accept="image/*"
+          [maxFileSize]="1000000"
+          label="Import"
+          chooseLabel="Import"
+          class="p-mr-2 p-d-inline-block B1"
+        ></p-fileUpload>
+        <button
+          pButton
+          pRipple
+          label="Export"
+          icon="pi pi-upload"
+          class="p-button-help"
+        ></button>
+      </ng-template>
+    </p-toolbar>
+
+    <p-table
+      #dt
+      [value]="factura.detalle"
+      [rows]="10"
+      [paginator]="true"
+      [(selection)]="selectedProducts"
+      [rowHover]="true"
+      dataKey="id"
+      currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+      [showCurrentPageReport]="true"
+    >
+      <ng-template pTemplate="caption">
+        <div class="p-d-flex p-ai-center p-jc-between">
+          <h5 class="p-m-0">Factura</h5>
+          <span class="p-input-icon-left">
+            <i class="pi pi-search"></i>
+            <input
+              pInputText
+              type="text"
+              [(ngModel)]="searchTerm"
+              (input)="dt.filterGlobal(searchTerm, 'contains')"
+              placeholder="Search..."
+            />
+          </span>
+        </div>
+      </ng-template>
+      <ng-template pTemplate="header">
+        <tr>
+          <th style="width: 3rem">
+            <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+          </th>
+          <th pSortableColumn="name">
+            Nombre <p-sortIcon field="name"></p-sortIcon>
+          </th>
+          <th pSortableColumn="price">
+            Precio <p-sortIcon field="price"></p-sortIcon>
+          </th>
+          <th pSortableColumn="category">
+            Cantidad <p-sortIcon field="category"></p-sortIcon>
+          </th>
+          <th></th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-factura>
+        <tr>
+          <td>
+            <p-tableCheckbox
+              [value]="factura.producto.idPoducto"
+            ></p-tableCheckbox>
+          </td>
+          <td>{{ factura.producto.nombre }}</td>
+          <td>{{ factura.precioVariante | currency : "USD" }}</td>
+          <td>{{ factura.cantidad }}</td>
+          <td>
+            <button
+              pButton
+              pRipple
+              icon="pi pi-pencil"
+              class="p-button-rounded p-button-success p-mr-2"
+              (click)="editProduct(factura)"
+            ></button>
+            <button
+              pButton
+              pRipple
+              icon="pi pi-trash"
+              class="p-button-rounded p-button-warning"
+              (click)="deleteProduct(product)"
+            ></button>
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="summary">
+        <div class="p-d-flex p-ai-center p-jc-between">
+          En total hay {{ productos ? productos.length : 0 }} products.
+        </div>
+      </ng-template>
+    </p-table>
+  </div>
+</div>
+
+<p-dialog
+  [(visible)]="productDialog"
+  [style]="{ width: '450px' }"
+  header="Detalles de producto"
+  [modal]="true"
+  styleClass="p-fluid"
+>
+  <ng-template pTemplate="content">
+    <div class="p-field">
+      <label for="name">Cliente</label>
+      <p-dropdown
+        [options]="clientes"
+        [(ngModel)]="selectedCliente"
+        optionLabel="nombre"
+      ></p-dropdown>
+      <small class="p-invalid" *ngIf="submitted && !product.name"
+        >Se requiere cliente.</small
+      >
+    </div>
+    <div class="p-field">
+      <label for="description">Productos</label>
+      <p-dropdown
+        [options]="productos"
+        [(ngModel)]="selectedProduct"
+        optionLabel="nombre"
+      ></p-dropdown>
+    </div>
+
+    <div class="p-formgrid p-grid">
+      <div class="p-field p-col">
+        <label for="price">Precio</label>
+        <p-inputNumber
+          id="price"
+          [(ngModel)]="precioNuevo"
+          mode="currency"
+          currency="USD"
+          locale="en-US"
+        ></p-inputNumber>
+      </div>
+      <div class="p-field">
+        <label for="quantity">Cantidad</label>
+        <p-inputNumber
+          id="quantity"
+          [(ngModel)]="cantidadNueva"
+        ></p-inputNumber>
+      </div>
+    </div>
+  </ng-template>
+
+  <ng-template pTemplate="footer">
+    <button
+      pButton
+      pRipple
+      label="Cancel"
+      icon="pi pi-times"
+      class="p-button-text"
+      (click)="hideDialog()"
+    ></button>
+    <button
+      pButton
+      pRipple
+      label="Save"
+      icon="pi pi-check"
+      class="p-button-text"
+      (click)="saveProduct()"
+    ></button>
+  </ng-template>
+</p-dialog>
+
+<p-confirmDialog [style]="{ width: '450px' }"></p-confirmDialog>

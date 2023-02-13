@@ -1,0 +1,6 @@
+com.factura_backend
+com.factura_backend.controller
+com.factura_backend.entidades
+com.factura_backend.excepciones
+com.factura_backend.repositorios
+com.factura_backend.servicios

@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","url":"allpackages-index.html"},{"l":"com.factura_backend"},{"l":"com.factura_backend.controller"},{"l":"com.factura_backend.entidades"},{"l":"com.factura_backend.excepciones"},{"l":"com.factura_backend.repositorios"},{"l":"com.factura_backend.servicios"}]
